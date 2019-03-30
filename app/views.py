@@ -8,6 +8,7 @@ This file creates your application.
 from app import app
 from flask import render_template, request
 from flask import jsonify
+from app.forms import UploadForm
 
 ###
 # Routing for your application.
@@ -29,28 +30,23 @@ def index(path):
     """
     return render_template('index.html')
 
-@app.route('/api/upload', methods=['POST', 'GET'])
+@app.route('/api/upload', methods=['POST'])
 def upload():
-
-    # Instantiate your form class
-    form = UploadForm()
-
-    # Validate file upload on submit
-    if request.method == 'POST' and form.validate_on_submit():
-
-        photo = form.photo.data 
-        description = form.description.data
-
-        filename = secure_filename(photo.filename)
-        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        # Get file data and save to your uploads folder
-
-        fileupload = [{'Message' : 'File Upload SUccessful', 'Filename' : filename, 'Description': description}]
-        return jsonify(uploads=fileupload) 
-     else:
-     	errors = form_errors(form)
-     	error = [{'Errors' : errors }]
-     	return jsonify(error= errors)
+	# Instantiate your form class
+	form = UploadForm()
+	
+	# Validate file upload on submit
+	if request.method == 'POST' and form.validate_on_submit():
+		photo = form.photo.data
+		description = form.description.data
+		filename = secure_filename(photo.filename)
+		photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+		fileupload = [{ 'Message' : 'File Upload Successful', 'Filename' : filename, 'Description': description }]
+		return jsonify(uploads=fileupload)
+	else:
+		errors = form_errors(form)
+		error = [{'Errors' : errors }]
+		return jsonify(error= errors)
 
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use

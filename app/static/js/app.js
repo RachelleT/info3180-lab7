@@ -28,6 +28,44 @@ Vue.component('app-footer', {
     `
 });
 
+const uploadform = Vue.component('upload-form', {
+	template:
+	`
+	<form @submit.prevent="uploadPhoto" method="post" enctype="multipart/form-data">
+	{{ form.csrf_token }}
+
+  	{# Add the file upload field as you learnt for Flask-WTF #}
+  	<div class="form-group">
+            {{ form.description.label }}
+            {{ form.description(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ form.photo.label }}
+            {{ form.photo(class="form-control") }}
+        </div>
+
+  	<button type="submit" name="submit" class="btn btn-primary">Upload file</button>
+	</form>
+	`,
+	methods: {
+	uploadPhoto: function() {
+		fetch("/api/upload", {
+			method: 'POST'
+		})
+		.then(function (response) {
+			return response.json();
+		})
+		.then(function (jsonResponse) {
+		// display a success message
+		console.log(jsonResponse);
+		})
+		.catch(function (error) {
+		console.log(error);
+		});
+	}
+	}
+});
+
 const Home = Vue.component('home', {
    template: `
     <div class="jumbotron">
@@ -57,9 +95,12 @@ const router = new VueRouter({
     routes: [
         {path: "/", component: Home},
         // Put other routes here
+        
+        {path: "/api/upload", component: uploadform},
 
         // This is a catch all route in case none of the above matches
         {path: "*", component: NotFound}
+        
     ]
 });
 
