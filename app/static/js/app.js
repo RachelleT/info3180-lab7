@@ -10,7 +10,8 @@ Vue.component('app-header', {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <router-link class="nav-link" to="/">Home <span class="sr-only">(current)</span></router-link>
+            <router-link class="nav-link" to="/">Home <!-- <span class="sr-only">(current)</span> --></router-link>
+            <router-link class="nav-link" to="/api/upload">Upload</router-link>
           </li>
         </ul>
       </div>
@@ -31,17 +32,15 @@ Vue.component('app-footer', {
 const uploadform = Vue.component('upload-form', {
 	template:
 	`
-	<form @submit.prevent="uploadPhoto" method="post" enctype="multipart/form-data">
-	{{ form.csrf_token }}
-
-  	{# Add the file upload field as you learnt for Flask-WTF #}
+	<form @submit.prevent="uploadPhoto" method="post" id="uploadForm">
+	<br>
   	<div class="form-group">
-            {{ form.description.label }}
-            {{ form.description(class="form-control") }}
+            <label class="label">Description</label>
+        	<input type="text" class="input" name="description">
         </div>
         <div class="form-group">
-            {{ form.photo.label }}
-            {{ form.photo(class="form-control") }}
+        	<label class="label">Photo</label>
+            <input type="file" name="photo">
         </div>
 
   	<button type="submit" name="submit" class="btn btn-primary">Upload file</button>
@@ -49,20 +48,29 @@ const uploadform = Vue.component('upload-form', {
 	`,
 	methods: {
 	uploadPhoto: function() {
+		
+		let uploadForm = document.getElementById('uploadForm');
+		let form_data = new FormData(uploadForm);
+		
 		fetch("/api/upload", {
-			method: 'POST'
-		})
-		.then(function (response) {
-			return response.json();
-		})
-		.then(function (jsonResponse) {
-		// display a success message
-		console.log(jsonResponse);
-		})
-		.catch(function (error) {
-		console.log(error);
-		});
-	}
+			method: 'POST',
+			body: form_data,
+			headers: {
+				'X-CSRFToken': token
+			},
+			credentials: 'same-origin'
+			})
+			.then(function (response) {
+				return response.json();
+			})
+			.then(function (jsonResponse) {
+			// display a success/error message
+				console.log(jsonResponse);
+			})
+			.catch(function (error) {
+				console.error(error);
+			});
+		}
 	}
 });
 
