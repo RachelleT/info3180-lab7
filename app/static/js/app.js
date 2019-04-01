@@ -10,7 +10,7 @@ Vue.component('app-header', {
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item active">
-            <router-link class="nav-link" to="/">Home <!-- <span class="sr-only">(current)</span> --></router-link>
+            <router-link class="nav-link" to="/">Home<span class="sr-only">(current)</span></router-link>
             <router-link class="nav-link" to="/api/upload">Upload</router-link>
           </li>
         </ul>
@@ -29,10 +29,10 @@ Vue.component('app-footer', {
     `
 });
 
-const uploadform = Vue.component('upload-form', {
+let uploadform = Vue.component('upload-form', {
 	template:
-	`
-	<form @submit.prevent="uploadPhoto" method="post" id="uploadForm">
+	`	
+	<form @submit.prevent="uploadPhoto" method="POST" id="uploadForm" enctype='multipart/form-data'>
 	<br>
   	<div class="form-group">
             <label class="label">Description</label>

@@ -41,14 +41,16 @@ def upload():
 		photo = form.photo.data
 		description = form.description.data
 		filename = secure_filename(photo.filename)
-		photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-		fileupload = [{ 'Message' : 'File Upload Successful', 'Filename' : filename, 'Description': description }]
-		return jsonify(uploads=fileupload)
+		photo.save('app/static/uploads/' + filename)
+		#photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+		fileupload = { 'Message' : 'File Upload Successful', 'Filename' : filename, 'Description': description }
+		upload = jsonify(fileupload)
+		return upload
 	else:
 		errors = []
 		for error in form_errors(form):
 			errors.append(dict({'Errors' : error }))
-		return jsonify({'Errors' = errors})
+		return jsonify({'Errors' : errors})
 
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use
