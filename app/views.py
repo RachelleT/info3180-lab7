@@ -45,9 +45,10 @@ def upload():
 		fileupload = [{ 'Message' : 'File Upload Successful', 'Filename' : filename, 'Description': description }]
 		return jsonify(uploads=fileupload)
 	else:
-		errors = form_errors(form)
-		error = [{'Errors' : errors }]
-		return jsonify(error= errors)
+		errors = []
+		for error in form_errors(form):
+			errors.append(dict({'Errors' : error }))
+		return jsonify({'Errors' = errors})
 
 # Here we define a function to collect form errors from Flask-WTF
 # which we can later use
